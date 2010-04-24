@@ -1,0 +1,43 @@
+<?php
+// $Id$
+
+function gcal_schema() {
+  $schema = array(
+    'gcal_accounts' => array(
+      'description' => 'GCal accounts information.',
+      'fields' => array(
+        'aid' => array(
+          'description' => 'The id for this account.',
+          'type' => 'serial',
+          'unsigned' => TRUE,
+          'not null' => TRUE
+        ),
+        'email' => array(
+          'description' => 'The email address for logging into Google.',
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'default' => ''
+        ),
+        'pass' => array(
+          'description' => 'The password for logging into Google.',
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'default' => ''
+        )
+      ),
+      'primary key' => array('aid'),
+    )
+  );
+
+  return $schema;
+}
+
+function gcal_install() {
+  drupal_install_schema('gcal');
+}
+
+function gcal_uninstall() {
+  drupal_uninstall_schema('gcal');
+}
