@@ -1,4 +1,3 @@
-; $Id$
 name = GCal
 description = Implements the Google Calendar API for Drupal
 package = Date/Time

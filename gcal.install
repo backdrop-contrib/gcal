@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 function gcal_schema() {
   $schema = array(
