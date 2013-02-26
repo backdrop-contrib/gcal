@@ -1,4 +1,6 @@
 name = GCal
 description = Implements the Google Calendar API for Drupal
-package = Date/Time
-core = 6.x
+package = Google Api
+core = 7.x
+
+dependencies[] = gauth

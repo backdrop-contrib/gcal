@@ -1,0 +1,690 @@
+This file has examples to guide you how to call each function of calendar.
+
+Note: 1) Variable $account_name should be 'NAME_OF_GAUTH_ACCOUNT'
+         managed and authenticated previously.
+      2) All calendar ids and event ids are result of testing please replace
+         them by your calendar and event ids wherever needed.
+
+
+Create Calendar
+---------------
+<?php
+ $params = array(
+   'Summary' => 'My_Calendar',
+   'Description' => 'Description of my calendar',
+   'TimeZone' => 'America/Los_Angeles',
+   'Location' => 'New York',
+ );
+  $cal = gcal_calendar_create($params, $account_name);
+  print_r($cal ? $cal : "Create calendar failed");
+?>
+
+Array
+(
+    [kind] => calendar#calendar
+    [etag] => "fi3QRdJKQhyHAzX8fKt0yeht0TY/3FQ2xRaww64OykD_u_Du74FuQ8s"
+    [id] => 'CALENDAR_ID'
+    [summary] => My_Calendar
+    [description] => Description of my calendar
+    [location] => New York
+)
+
+
+Update Calendar
+---------------
+<?php
+  $params = array(
+    'Id' => 'CALENDAR_ID',
+    'Summary' => 'My_Calendar_Updated',
+    'Description' => 'Updated Description of my calendar',
+    'TimeZone' => 'Pacific/Honolulu',
+    'Location' => 'San Fransisco',
+  );
+  $cal = gcal_calendar_update($params, $account_name);
+  print_r($cal ? $cal : "Can't update calendar");
+?>
+
+Array
+(
+    [kind] => calendar#calendar
+    [etag] => "fi3QRdJKQhyHAzX8fKt0yeht0TY/UPUlnWptkGZzGquBF0ghg_8EiXs"
+    [id] => 'CALENDAR_ID'
+    [summary] => My_Calendar_Updated
+    [description] => Updated Description of my calendar
+    [location] => San Fransisco
+)
+
+
+Delete Calendar
+---------------
+<?php
+$calgcal_calendar_delete('CALENDAR_ID', $account_name);
+?>
+
+
+Get Calendar
+------------
+<?php
+ $cal = gcal_calendar_get('CALENDAR_ID', $account_name);
+ print_r($cal ? $cal : "Calendar can't be fetched");
+?>
+
+Array
+(
+    [kind] => calendar#calendar
+    [etag] => "fi3QRdJKQhyHAzX8fKt0yeht0TY/UPUlnWptkGZzGquBF0ghg_8EiXs"
+    [id] => 'CALENDAR_ID'
+    [summary] => My_Calendar_Updated
+    [description] => Updated Description of my calendar
+    [location] => San Fransisco
+    [timeZone] => Pacific/Honolulu
+)
+
+
+Make Calendar Public
+--------------------
+<?php
+  $cal = gcal_calendar_public('CALENDAR_ID', $account_name);
+  print_r($cal ? $cal : "Calendar is not made public");
+?>
+1  //successfully updated calendar to public
+
+
+Make Calendar Private
+---------------------
+<?php
+  gcal_calendar_private('CALENDAR_ID', $account_name);
+?>
+//nothing is returned by this function
+
+
+Get Calendar Settings
+---------------------
+<?php
+  $setting = gcal_setting_get('defaultCalendarMode', $account_name);
+  print_r($setting ? $setting : "Can't get list of settings");
+?>
+
+Array
+(
+    [kind] => calendar#setting
+    [etag] => "fi3QRdJKQhyHAzX8fKt0yeht0TY/6XgMfK4O2uEza5GLOAklz9PBCVE"
+    [id] => defaultCalendarMode
+    [value] => month
+)
+
+
+List Calendar Settings
+----------------------
+<?php
+  $settings = gcal_setting_list($account_name);
+  print_r($settings ? $settings : "Can't get list of settings");
+?>
+
+Array
+(
+    [kind] => calendar#settings
+    [etag] => "fi3QRdJKQhyHAzX8fKt0yeht0TY/p2UUvRCTeyDFbS9SpNq2m0rl58U"
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [kind] => calendar#setting
+                    [etag] => "MY_CAL_ETAG"
+                    [id] => weather
+                    [value] =>
+                )
+
+            [1] => Array
+                (
+                    [kind] => calendar#setting
+                    [etag] => "MY_CAL_ETAG"
+                    [id] => defaultCalendarMode
+                    [value] => month
+                )
+.
+.
+.
+.
+            [15] => Array
+                (
+                    [kind] => calendar#setting
+                    [etag] => "MY_CAL_ETAG"
+                    [id] => timezone
+                    [value] => Asia/Calcutta
+                )
+
+        )
+
+)
+
+
+Get Color
+---------
+<?php
+  $col = gcal_colors_get($account_name);
+  print_r($col ? $col : "Can't fetch color list");
+?>
+
+Array
+(
+    [kind] => calendar#colors
+    [updated] => 2012-02-14T00:00:00.000Z
+    [calendar] => Array
+        (
+            [1] => Array
+                (
+                    [background] => #ac725e
+                    [foreground] => #1d1d1d
+                )
+.
+.
+.
+            [24] => Array
+                (
+                    [background] => #a47ae2
+                    [foreground] => #1d1d1d
+                )
+
+        )
+
+    [event] => Array
+        (
+            [1] => Array
+                (
+                    [background] => #a4bdfc
+                    [foreground] => #1d1d1d
+                )
+.
+.
+.
+            [11] => Array
+                (
+                    [background] => #dc2127
+                    [foreground] => #1d1d1d
+                )
+
+        )
+
+)
+
+
+Create Event
+------------
+<?php
+
+  // Recurrence.
+  $recurrence = array();
+  $recurrence['Frequency'] = 'WEEKLY';
+  $recurrence['Until'] = '20121225';
+  $recurrence['Byday'] = 'Mo,Tu';
+
+  // Reminders.
+  $reminders = array(
+    0 => array(
+      'minutes' => '60',
+      'method' => 'email',
+    ),
+    1 => array(
+      'minutes' => '10',
+      'method' => 'popup',
+    ),
+  );
+  $params = array(
+    'Summary' => 'My Event',
+    'Timezone' => 'Asia/Calcutta',
+    'Creator' => array('Email' => 'account@gmail.com', 'DisplayName' => 'My_name'),
+    'Organizer' => array('Email' => 'account@gmail.com', 'DisplayName' => 'My_name'),
+    'Recurrence' => $recurrence,
+    'Start' => '2012-12-03 12:30:30',
+    'Location' => 'Stanford',
+    'Description' => 'Test event created by calendar api',
+    'Visibility' => 'public',
+    'End' => '2012-12-03 14:30:30',
+    'Locked' => FALSE,
+    'ColorId' => 3,
+    'Reminders' => $reminders,
+    'GuestsCanSeeOtherGuests' => FALSE,
+    'OriginalStartTime' => '12:30:30',
+    'GuestsCanInviteOthers' => FALSE,
+    'PrivateCopy' => FALSE,
+  );
+  $event = gcal_event_create($params, 'CALENDAR_ID', $account_name);
+  print_r($event ? $event : "Event creation failed");
+?>
+
+Array
+(
+    [kind] => calendar#event
+    [etag] => "fi3QRdJKQhyHAzX8fKt0yeht0TY/Z2NhbDAwMDAxMzU2NTgzODc5Mzk0MDAw"
+    [id] => 'EVENT_ID'
+    [status] => confirmed
+    [htmlLink] => "HTML LINK OF THE EVENT"
+    [created] => 2012-12-27T04:51:18.000Z
+    [updated] => 2012-12-27T04:51:19.394Z
+    [summary] => My Event
+    [description] => Test event created by calendar api
+    [location] => Mumbai
+    [colorId] => 3
+    [creator] => Array
+        (
+            [email] => XYZ@gmail.com
+        )
+
+    [organizer] => Array
+        (
+            [email] => CALENDAR_ID
+            [displayName] => testcal
+            [self] => 1
+        )
+
+    [start] => Array
+        (
+            [dateTime] => 2012-12-03T07:00:30Z
+            [timeZone] => Asia/Calcutta
+        )
+
+    [end] => Array
+        (
+            [dateTime] => 2012-12-03T09:00:30Z
+            [timeZone] => Asia/Calcutta
+        )
+
+    [recurrence] => Array
+        (
+            [0] => RRULE:FREQ=WEEKLY;UNTIL=20121225;BYDAY=MO,TU
+        )
+
+    [visibility] => public
+    [iCalUID] => dckefdlg78mlqqpcd786pjg6lg@google.com
+    [sequence] => 0
+    [guestsCanInviteOthers] =>
+    [guestsCanSeeOtherGuests] =>
+    [reminders] => Array
+        (
+            [useDefault] =>
+            [overrides] => Array
+                (
+                    [0] => Array
+                        (
+                            [method] => email
+                            [minutes] => 60
+                        )
+
+                    [1] => Array
+                        (
+                            [method] => popup
+                            [minutes] => 10
+                        )
+
+                )
+
+        )
+
+)
+
+Update Event
+------------
+<?php
+  // Attendees.
+  $attendees = array();
+  $attendees[0]['Email'] = 'emailaddress';
+  $attendees[0]['DisplayName'] = 'displayname';
+  $attendees[0]['ResponseStatus'] = 'needsAction';
+  $attendees[0]['AdditionalGuests'] = 1;
+  $params = array(
+    'Id' => 'EVENT_ID',
+    'Attendees' => $attendees,
+  );
+  $event = gcal_event_update($params, 'CALENDAR_ID', $account_name);
+  print_r($event ? $cal : "Failed updating event");
+?>
+
+Array
+(
+    [kind] => calendar#event
+    [etag] => "fi3QRdJKQhyHAzX8fKt0yeht0TY/Z2NhbDAwMDAxMzU3MTUyMTc1NDg3MDAw"
+    [id] => 'EVENT_ID'
+    [status] => confirmed
+    [htmlLink] => "HTML_LINK OF THE EVENT"
+    [created] => 2012-12-31T10:04:09.000Z
+    [updated] => 2013-01-02T18:42:55.487Z
+    [summary] => attendee test event
+    [creator] => Array
+        (
+            [email] => XYZ@gmail.com
+            [displayName] => ABC
+            [self] => 1
+        )
+
+    [organizer] => Array
+        (
+            [email] => XYZ@gmail.com
+            [displayName] => PQR
+            [self] => 1
+        )
+
+    [start] => Array
+        (
+            [date] => 2013-01-02
+        )
+
+    [end] => Array
+        (
+            [date] => 2013-01-03
+        )
+
+    [iCalUID] => 5cpnjtu4g0bn6l8ebpb5llg9vk@google.com
+    [sequence] => 0
+    [attendees] => Array
+        (
+            [0] => Array
+                (
+                    [email] => emailaddress
+                    [responseStatus] => needsAction
+                    [additionalGuests] => 1
+                )
+        )
+
+    [guestsCanSeeOtherGuests] =>
+    [reminders] => Array
+        (
+            [useDefault] => 1
+        )
+
+)
+
+
+Delete Event
+------------
+<?php
+  gcal_event_delete('EVENT_ID', 'CALENDAR_ID', $account_name);
+?>
+
+
+Get Event
+---------
+<?php
+  $event = gcal_event_delete('EVENT_ID', 'CALENDAR_ID', $account_name);
+  print_r($event);
+?>
+output is same as that of create event.
+Entire event array with all attributes which are set for the event.
+
+
+Move Event
+----------
+<?php
+  $event = gcal_event_move('SRC_CAL', 'EVENT_ID', 'DEST_CAL' $account_name);
+  print_r($event);
+?>
+output is same as that of create event.
+Entire event array with all attributes which are set for the event.
+
+Quick Add Event
+---------------
+<?php
+  $event = gcal_event_quickadd('CALENDAR_ID', 'New Event', $account_name);
+  print_r($event ? $event : 'Event create failed');
+?>
+Array
+(
+    [kind] => calendar#event
+    [etag] => "ZrhdJMCgpoUK_a5fT7XOC6xn46g/Z2NhbDAwMDAxMzU5ODEwMTgxMDIzMDAw"
+    [id] => EVENT_ID
+    [status] => confirmed
+    [htmlLink] => "HTML_LINK OF THE EVENT"
+    [created] => 2013-02-02T13:03:01.000Z
+    [updated] => 2013-02-02T13:03:01.023Z
+    [summary] => New Event
+    [creator] => Array
+        (
+            [email] => emailaddress
+        )
+
+    [organizer] => Array
+        (
+            [email] => emailaddress
+            [displayName] => My_Calendar
+            [self] => 1
+        )
+
+    [start] => Array
+        (
+            [dateTime] => 2013-02-02T05:03:01-08:00
+        )
+
+    [end] => Array
+        (
+            [dateTime] => 2013-02-02T06:03:01-08:00
+        )
+
+    [iCalUID] => 4uu9u4kktsit3g51vunn5f61bo@google.com
+    [sequence] => 0
+    [reminders] => Array
+        (
+            [useDefault] => 1
+        )
+
+)
+
+FreeBusy check
+--------------
+<?php
+  $params = array(
+    'TimeMin' => '2013-02-04 11:30:00',
+    'TimeMax' => '2013-02-04 12:30:00',
+    'Items' => array('MY_CALENDAR_ID'),
+    'TimeZone' => 'America/Los_Angeles',
+  );
+  $search = gcal_freebusy($params, $account_name);
+  print_r($search);
+?>
+Array
+(
+    [kind] => calendar#freeBusy
+    [timeMin] => 2013-02-04T03:30:00.000Z
+    [timeMax] => 2013-02-04T04:30:00.000Z
+    [calendars] => Array
+        (
+            [MY_CALENDAR_ID] => Array
+                (
+                    [busy] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [start] => 2013-02-03T19:30:00-08:00
+                                    [end] => 2013-02-03T20:30:00-08:00
+                                )
+
+                        )
+
+                )
+
+        )
+
+)
+Note: The busy array is empty if you their is no event in search interval
+
+Create ACL
+----------
+<?php
+  $acl = array(
+    'scopeType' => "default",
+    'role' => "reader",
+  );
+  $acl = gcal_acl_create($acl, 'CALENDAR_ID', $account_name);
+  print_r($acl ? $acl : 'Acl creation failed');
+?>
+Array
+(
+    [kind] => calendar#aclRule
+    [etag] => "fi3QRdJKQhyHAzX8fKt0yeht0TY/oEfIYGUQ1KDhE4kN2Ik32PrGtU4"
+    [id] => default
+    [scope] => Array
+        (
+            [type] => default
+            [value] => __public_principal__@public.calendar.google.com
+        )
+
+    [role] => reader
+)
+
+Delete ACL
+----------
+<?php
+gcal_acl_delete('CALENDAR_ID', 'RULE_ID', $account_name);
+?>
+
+Get ACL
+-------
+<?php
+  $acl = gcal_acl_get('CALENDAR_ID', 'rule_id', $account_name);
+  print_r($acl ? $acl : 'Acl fetched failed');
+?>
+Array
+(
+    [kind] => calendar#aclRule
+    [etag] => "fi3QRdJKQhyHAzX8fKt0yeht0TY/oEfIYGUQ1KDhE4kN2Ik32PrGtU4"
+    [id] => default
+    [scope] => Array
+        (
+            [type] => default
+            [value] => __public_principal__@public.calendar.google.com
+        )
+
+    [role] => reader
+)
+
+Create Calendar List
+--------------------
+<?php
+  $callist = array(
+    'Id' => 'CalendarList Update',
+    'Summary' => 'CalendarList Update',
+    'Description' => 'Calendar List Description',
+    'Location' => 'Mumbai',
+    'DefaultReminders' => array(
+      0 => array(
+        'minutes' => 10,
+        'method' => 'email',
+      ),
+    ),
+    'SummaryOverride' => 'Summary Override',
+    'TimeZone' => 'Asia/Calcutta',
+  );
+  $calList = gcal_calendarlist_create($callist, $account_name);
+  print_r($calList ? $calList : 'Calendar list insert failed');
+?>
+Array
+(
+    [kind] => calendar#calendarListEntry
+    [etag] => 'MY_CALENDAR_ID'
+    [id] => fmcr7hk3cpmav1gt1uhppb7kb4@group.calendar.google.com
+    [summary] => My_Calendar_Updated
+    [description] => Updated Description of my calendar
+    [location] => Pacific/Honolulu
+    [timeZone] => America/Los_Angeles
+    [colorId] => 12
+    [backgroundColor] => #fad165
+    [foregroundColor] => #000000
+    [selected] => 1
+    [accessRole] => owner
+    [defaultReminders] => Array
+        (
+            [0] => Array
+                (
+                    [method] => email
+                    [minutes] => 10
+                )
+        )
+)
+
+Update Calendar List
+--------------------
+<?php
+  $callist = array(
+    'Id' => 'CalendarList Update',
+    'Summary' => 'CalendarList Update',
+    'Description' => 'Calendar List Description',
+    'Location' => 'Mumbai',
+    'DefaultReminders' => array(
+      0 => array(
+        'minutes' => 30,
+        'method' => 'email',
+      ),
+    ),
+    'SummaryOverride' => 'Summary Override',
+    'TimeZone' => 'Asia/Calcutta',
+  );
+  $calList = gcal_calendarlist_update($callist, $account_name);
+  print_r($calList ? $calList : 'Calendar list insert failed');
+?>
+Array
+(
+    [kind] => calendar#calendarListEntry
+    [etag] => 'MY_CALENDAR_ID'
+    [id] => fmcr7hk3cpmav1gt1uhppb7kb4@group.calendar.google.com
+    [summary] => My_Calendar_Updated
+    [description] => Updated Description of my calendar
+    [location] => Pacific/Honolulu
+    [timeZone] => America/Los_Angeles
+    [colorId] => 12
+    [backgroundColor] => #fad165
+    [foregroundColor] => #000000
+    [selected] => 1
+    [accessRole] => owner
+    [defaultReminders] => Array
+        (
+            [0] => Array
+                (
+                    [method] => email
+                    [minutes] => 10
+                )
+            [1] => Array
+                (
+                    [method] => email
+                    [minutes] => 30
+                )
+       )
+)
+
+Get Calendar List
+-----------------
+<?php
+  $callist = gcal_calendarlist_get('MY_CALENDAR_ID', $account_name);
+  print_r($callist ? $callist : 'CalList fetch failed');
+?>
+Array
+(
+    [kind] => calendar#calendarListEntry
+    [etag] => 'MY_CALENDAR_ID'
+    [id] => fmcr7hk3cpmav1gt1uhppb7kb4@group.calendar.google.com
+    [summary] => My_Calendar_Updated
+    [description] => Updated Description of my calendar
+    [location] => Pacific/Honolulu
+    [timeZone] => America/Los_Angeles
+    [colorId] => 12
+    [backgroundColor] => #fad165
+    [foregroundColor] => #000000
+    [selected] => 1
+    [accessRole] => owner
+    [defaultReminders] => Array
+        (
+            [0] => Array
+                (
+                    [method] => email
+                    [minutes] => 10
+                )
+            [1] => Array
+                (
+                    [method] => email
+                    [minutes] => 30
+                )
+       )
+)
+Delete Calendar List
+--------------------
+<?php
+  gcal_calendarlist_delete('MY_CALENDAR_ID', $account_name);
+?>
