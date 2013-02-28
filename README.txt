@@ -21,7 +21,7 @@ You can fetch calendar settings, color details, etc.
 
 REQUIREMENTS
 ------------
-1. Google OAuth2 - Download it from http://drupal.org/sandbox/sadashiv/1857254
+1. GAuth - Download it from http://drupal.org/project/gauth
 
 
 INSTALLATION
@@ -30,10 +30,10 @@ INSTALLATION
 1. Copy this module directory to your sites/all/modules or
    sites/SITENAME/modules directory.
 
-2. Install the required google oauth2 module.
+2. Install the required GAuth module.
 
 3. Enable the module and manage accounts at
-   admin/config/services/google_oauth2_account.
+   admin/config/services/gauth_account.
 
 4. Write own module to use apis of this module and manage calendar, events.
 
@@ -41,7 +41,7 @@ INSTALLATION
 
 CONFIGURATION
 -------------
-1. Configure the api accounts at admin/config/services/google_oauth2_account.
+1. Configure the api accounts at admin/config/services/gauth_account.
 
 2. You can add new account or update existing accounts.
     Specify unique name by which you can identify the account.
