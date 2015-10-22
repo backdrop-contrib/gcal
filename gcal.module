@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Google Calendar Api for drupal.
+ * Google Calendar Api for backdrop.
  */
 
 /**
@@ -11,7 +11,7 @@
 function gcal_help($path, $arg) {
   switch ($path) {
     case 'admin/help#gcal':
-      $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'gcal');
+      $path = $GLOBALS['base_url'] . '/' . backdrop_get_path('module', 'gcal');
       $output = '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t("This module allows you to manage your google calendars. This will help in accessing calendar and performing operations easily.") . '</p>';
       $output .= '<h3>' . t('Uses') . '</h3>';
@@ -153,12 +153,12 @@ function gcal_freebusy_attributes() {
 function gcal_calendar_object($account_id, $by_name = TRUE) {
   $info = libraries_load("google-api-php-client");
   if (!$info['loaded']) {
-    drupal_set_message(t("Can't perform any operation as library is missing check Status report or Readme for requirements"), 'error');
+    backdrop_set_message(t("Can't perform any operation as library is missing check Status report or Readme for requirements"), 'error');
     return FALSE;
   }
   $google_client = gauth_client_get($account_id, $by_name);
   if (!$google_client) {
-    drupal_set_message(t("Can't create google client object, account is Invalid"), 'error');
+    backdrop_set_message(t("Can't create google client object, account is Invalid"), 'error');
     return FALSE;
   }
   return new Google_Service_Calendar($google_client);
@@ -191,11 +191,11 @@ function gcal_calendar_object($account_id, $by_name = TRUE) {
  */
 function gcal_calendar_create($calendar, $account_id, $by_name = TRUE) {
   if (!is_array($calendar)) {
-    drupal_set_message(t("Please pass array of attributes to create function"));
+    backdrop_set_message(t("Please pass array of attributes to create function"));
     return FALSE;
   }
   if (!isset($calendar['Summary'])) {
-    drupal_set_message(t("Please set the summary for the calendar"), 'error');
+    backdrop_set_message(t("Please set the summary for the calendar"), 'error');
     return FALSE;
   }
   $gcs = gcal_calendar_object($account_id, $by_name);
@@ -237,11 +237,11 @@ function gcal_calendar_create($calendar, $account_id, $by_name = TRUE) {
  */
 function gcal_calendar_update($calendar, $account_id, $by_name = TRUE) {
   if (!is_array($calendar)) {
-    drupal_set_message(t("Please pass array of attributes to update function"));
+    backdrop_set_message(t("Please pass array of attributes to update function"));
     return FALSE;
   }
   if (!isset($calendar['Id'])) {
-    drupal_set_message(t("Please set the id for the calendar"), 'error');
+    backdrop_set_message(t("Please set the id for the calendar"), 'error');
     return FALSE;
   }
   $gcs = gcal_calendar_object($account_id, $by_name);
@@ -361,7 +361,7 @@ function gcal_setting_get($setting, $account_id, $by_name = TRUE) {
     return FALSE;
   }
   if (!in_array($setting, gcal_settings_attributes())) {
-    drupal_set_message(t("Invalid setting name specified"), 'error');
+    backdrop_set_message(t("Invalid setting name specified"), 'error');
     return FALSE;
   }
   $set = $gcs->settings->get($setting);
@@ -507,15 +507,15 @@ function gcal_colors_get($account_id, $by_name = TRUE) {
  */
 function gcal_event_create($event, $calendar_id, $account_id, $by_name = TRUE) {
   if (!is_array($event)) {
-    drupal_set_message(t("Please pass array of attributes to create function"));
+    backdrop_set_message(t("Please pass array of attributes to create function"));
     return FALSE;
   }
   if (!isset($event['Start']) || !isset($event['End'])) {
-    drupal_set_message(t("Invalid start or end date of the event"), 'error');
+    backdrop_set_message(t("Invalid start or end date of the event"), 'error');
     return FALSE;
   }
   if (!isset($event['Timezone'])) {
-    drupal_set_message(t("Set a valid Timezone"), 'error');
+    backdrop_set_message(t("Set a valid Timezone"), 'error');
     return FALSE;
   }
   $gcs = gcal_calendar_object($account_id, $by_name);
@@ -568,7 +568,7 @@ function gcal_event_create($event, $calendar_id, $account_id, $by_name = TRUE) {
     $event['Recurrence'] = array();
     $event['Recurrence'][0] = "RRULE:";
     if (!isset($recurrence['Frequency'])) {
-      drupal_set_message(t("Frequency is required to make event recurring"), "error");
+      backdrop_set_message(t("Frequency is required to make event recurring"), "error");
       return FALSE;
     }
     $event['Recurrence'][0] .= "FREQ=" . $recurrence['Frequency'] . ";";
@@ -587,7 +587,7 @@ function gcal_event_create($event, $calendar_id, $account_id, $by_name = TRUE) {
     $attributes = gcal_event_attendee_attributes();
     foreach ($event['Attendees'] as $at_id => $attendee) {
       if (!isset($attendee['Email'])) {
-        drupal_set_message(t("Email is Required to register a attendee"), "error");
+        backdrop_set_message(t("Email is Required to register a attendee"), "error");
       }
       else {
         $attendee = array_intersect_key($attendee, $attributes);
@@ -635,11 +635,11 @@ function gcal_event_create($event, $calendar_id, $account_id, $by_name = TRUE) {
  */
 function gcal_event_update($event, $calendar_id, $account_id, $by_name = TRUE) {
   if (!is_array($event)) {
-    drupal_set_message(t("Please pass array of attributes to update function"));
+    backdrop_set_message(t("Please pass array of attributes to update function"));
     return FALSE;
   }
   if (!isset($event['Id'])) {
-    drupal_set_message(t("Set event id of the event"), 'error');
+    backdrop_set_message(t("Set event id of the event"), 'error');
     return FALSE;
   }
   $gcs = gcal_calendar_object($account_id, $by_name);
@@ -696,7 +696,7 @@ function gcal_event_update($event, $calendar_id, $account_id, $by_name = TRUE) {
     $event['Recurrence'] = array();
     $event['Recurrence'][0] = "RRULE:";
     if (!isset($recurrence['Frequency'])) {
-      drupal_set_message(t("Frequency is required to make event recurring"), "error");
+      backdrop_set_message(t("Frequency is required to make event recurring"), "error");
       return FALSE;
     }
     $event['Recurrence'][0] .= "FREQ=" . $recurrence['Frequency'] . ";";
@@ -721,7 +721,7 @@ function gcal_event_update($event, $calendar_id, $account_id, $by_name = TRUE) {
     $attendees = $new_event->getAttendees();
     foreach ($event['Attendees'] as $at_id => $attendee) {
       if (!isset($attendee['Email'])) {
-        drupal_set_message(t("Email is Required to register a attendee"), "error");
+        backdrop_set_message(t("Email is Required to register a attendee"), "error");
       }
       else {
         $attendee = array_intersect_key($attendee, $attributes);
@@ -870,15 +870,15 @@ function gcal_event_quickadd($calendar_id, $text, $account_id, $by_name = TRUE) 
  */
 function gcal_freebusy($params, $account_id, $by_name = TRUE) {
   if (!is_array($params)) {
-    drupal_set_message(t("Please pass array of params"));
+    backdrop_set_message(t("Please pass array of params"));
     return FALSE;
   }
   if (!isset($params['TimeMin']) || !isset($params['TimeMax'])) {
-    drupal_set_message(t("Invalid start or end time for the search query"), 'error');
+    backdrop_set_message(t("Invalid start or end time for the search query"), 'error');
     return FALSE;
   }
   if (!isset($params['TimeZone'])) {
-    drupal_set_message(t("Set a valid Timezone"), 'error');
+    backdrop_set_message(t("Set a valid Timezone"), 'error');
     return FALSE;
   }
   $gcs = gcal_calendar_object($account_id, $by_name);
@@ -962,17 +962,17 @@ function gcal_acl_create($acl, $calendar_id, $account_id, $by_name = TRUE) {
     return FALSE;
   }
   if (!isset($acl['scopeType'])) {
-    drupal_set_message(t("Pass scopeType to the acl create function"), 'error');
+    backdrop_set_message(t("Pass scopeType to the acl create function"), 'error');
     return FALSE;
   }
   if (!in_array($acl['scopeType'], array('default', 'user', 'group', 'domain'))) {
-    drupal_set_message(t("Invalid scopeType passed to the acl create function"), 'error');
+    backdrop_set_message(t("Invalid scopeType passed to the acl create function"), 'error');
     return FALSE;
   }
   $scope = new Google_Service_Calendar_AclRuleScope();
   $scope->setType($acl['scopeType']);
   if ($acl['scopeType'] != 'default' && !isset($acl['scopeValue'])) {
-    drupal_set_message(t("No scopeValue passed to the acl create function"), 'error');
+    backdrop_set_message(t("No scopeValue passed to the acl create function"), 'error');
     return FALSE;
   }
   if (isset($acl['scopeValue'])) {
@@ -986,7 +986,7 @@ function gcal_acl_create($acl, $calendar_id, $account_id, $by_name = TRUE) {
   if (isset($acl['role'])) {
     if (!in_array($acl['role'],
         array('freeBusyReader', 'reader', 'writer', 'owner'))) {
-      drupal_set_message(t("Invalid role passed to the acl create function"), 'error');
+      backdrop_set_message(t("Invalid role passed to the acl create function"), 'error');
       return FALSE;
     }
     $rule->setRole($acl['role']);
@@ -1089,11 +1089,11 @@ function gcal_acl_get($calendar_id, $rule_id, $account_id, $by_name = TRUE) {
  */
 function gcal_calendarList_create($calendarlist, $account_id, $by_name = TRUE) {
   if (!is_array($calendarlist)) {
-    drupal_set_message(t("Please pass array of attributes to update function"));
+    backdrop_set_message(t("Please pass array of attributes to update function"));
     return FALSE;
   }
   if (!isset($calendarlist['Id'])) {
-    drupal_set_message(t("Please set the id for the calendar"), 'error');
+    backdrop_set_message(t("Please set the id for the calendar"), 'error');
     return FALSE;
   }
   $gcs = gcal_calendar_object($account_id, $by_name);
@@ -1162,11 +1162,11 @@ function gcal_calendarList_create($calendarlist, $account_id, $by_name = TRUE) {
  */
 function gcal_calendarlist_update($calendarlist, $account_id, $by_name = TRUE) {
   if (!is_array($calendarlist)) {
-    drupal_set_message(t("Please pass array of attributes to update function"));
+    backdrop_set_message(t("Please pass array of attributes to update function"));
     return FALSE;
   }
   if (!isset($calendarlist['Id'])) {
-    drupal_set_message(t("Please set the id for the calendar"), 'error');
+    backdrop_set_message(t("Please set the id for the calendar"), 'error');
     return FALSE;
   }
   $gcs = gcal_calendar_object($account_id, $by_name);
