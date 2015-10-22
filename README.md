@@ -10,8 +10,7 @@ settings, color details, etc.
 You need to write your own module to use the APIs of this 
 module and thereby manage calendars and events.
 
-This is a port from the Drupal module of the same name. It contains
-two sub-modules: gauth_login and gauth_user.
+This is a port from the Drupal module of the same name.
 
 ## Requirements
 
@@ -29,7 +28,8 @@ on the Google API PHP client library.
 
 ## Help & Documentation
 
-See readme.txt for more information about installation and use.
+See readme.txt and examples.txt for more information 
+about installation and use.
 
 
 ## License
